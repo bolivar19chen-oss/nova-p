@@ -97,7 +97,11 @@ function readDB() {
   }
 }
 function writeDB(data) {
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+  try {
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("[db] no se pudo persistir en disco (esperado en serverless):", err);
+  }
 }
 var db = {
   get: readDB,
@@ -180,8 +184,12 @@ function requireAuth(req, res, next) {
 
 // server/routes.ts
 var __dirname2 = path2.dirname(fileURLToPath2(import.meta.url));
-var UPLOADS_DIR = path2.join(__dirname2, "uploads");
-if (!fs2.existsSync(UPLOADS_DIR)) fs2.mkdirSync(UPLOADS_DIR, { recursive: true });
+var UPLOADS_DIR = process.env.VERCEL ? path2.join("/tmp", "uploads") : path2.join(__dirname2, "uploads");
+try {
+  if (!fs2.existsSync(UPLOADS_DIR)) fs2.mkdirSync(UPLOADS_DIR, { recursive: true });
+} catch (err) {
+  console.warn("[uploads] no se pudo crear el directorio, las subidas quedaran deshabilitadas:", err);
+}
 var upload = multer({
   storage: multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),

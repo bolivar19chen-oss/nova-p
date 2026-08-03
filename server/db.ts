@@ -311,7 +311,15 @@ function readDB(): DBShape {
 }
 
 function writeDB(data: DBShape) {
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+  // posts y trackingRoutes son lo unico que sigue en archivo. En serverless el
+  // disco es de solo lectura, asi que esto tirara siempre: se degrada a un aviso
+  // en vez de romper la peticion. Quedan en memoria mientras viva la invocacion.
+  // Pendiente real: migrar estas dos tablas a Postgres como el resto.
+  try {
+    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("[db] no se pudo persistir en disco (esperado en serverless):", err);
+  }
 }
 
 export const db = {

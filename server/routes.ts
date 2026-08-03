@@ -34,8 +34,24 @@ import {
 } from "./auth";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const UPLOADS_DIR = path.join(__dirname, "uploads");
-if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+
+// En serverless (Vercel) el disco es de solo lectura salvo /tmp, asi que crear
+// la carpeta junto al codigo revienta el modulo entero al importarse y tumba
+// TODA la API, no solo las subidas. Por eso: /tmp en Vercel, y el mkdir va
+// envuelto para que un disco de solo lectura nunca impida arrancar.
+//
+// OJO: /tmp es efimero en serverless. Las fotos subidas en produccion
+// desaparecen entre invocaciones. La solucion real es almacenamiento de
+// objetos (Vercel Blob o S3); esto solo evita que el arranque falle.
+const UPLOADS_DIR = process.env.VERCEL
+  ? path.join("/tmp", "uploads")
+  : path.join(__dirname, "uploads");
+
+try {
+  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+} catch (err) {
+  console.warn("[uploads] no se pudo crear el directorio, las subidas quedaran deshabilitadas:", err);
+}
 
 const upload = multer({
   storage: multer.diskStorage({
