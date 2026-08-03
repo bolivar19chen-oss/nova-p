@@ -32,3 +32,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Salida del bundle para Vercel: la genera el buildCommand, no se versiona
+api/

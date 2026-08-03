@@ -9,7 +9,7 @@
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
-import { apiRouter } from "../server/routes";
+import { apiRouter } from "./routes";
 
 const app = express();
 

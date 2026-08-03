@@ -107,7 +107,18 @@
       "Bash(git init *)",
       "Bash(git add *)",
       "Bash(grep -iE \"\\\\.env$|data\\\\.json|\\\\.env\\\\.\")",
-      "Bash(git -c user.email=panyaoo1381@gmail.com -c 'user.name=Pet Nova' commit -q -m ' *)"
+      "Bash(git -c user.email=panyaoo1381@gmail.com -c 'user.name=Pet Nova' commit -q -m ' *)",
+      "Bash(git ls-remote *)",
+      "mcp__a70fd893-8a6b-413c-8f33-831a179bbb18__list_teams",
+      "mcp__a70fd893-8a6b-413c-8f33-831a179bbb18__list_projects",
+      "mcp__a70fd893-8a6b-413c-8f33-831a179bbb18__list_deployments",
+      "mcp__a70fd893-8a6b-413c-8f33-831a179bbb18__get_project_deployment_protection",
+      "mcp__a70fd893-8a6b-413c-8f33-831a179bbb18__update_project_deployment_protection",
+      "mcp__a70fd893-8a6b-413c-8f33-831a179bbb18__get_runtime_logs",
+      "Bash(git mv *)",
+      "Bash(sed -i 's|from \"../server/routes\"|from \"./routes\"|' server/vercel-entry.ts)",
+      "Bash(npx esbuild *)",
+      "Bash(grep -cE \"from \\\\\"\\\\\\\\.\\\\\\\\.?/\" api/index.js)"
     ]
   }
 }
