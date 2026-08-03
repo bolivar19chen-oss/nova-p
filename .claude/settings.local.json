@@ -106,7 +106,8 @@
       "PowerShell(cd \"C:\\\\Users\\\\Usuario\\\\Desktop\\\\Nueva carpeta\"; $e = npx tsc --noEmit 2>&1 | Select-String -Pattern \"error TS\"; \"total: \" + $e.Count; \"--- fuera de codigo muerto ---\"; $e | Select-String -NotMatch -Pattern \"_core|DashboardLayout\")",
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(grep -iE \"\\\\.env$|data\\\\.json|\\\\.env\\\\.\")"
+      "Bash(grep -iE \"\\\\.env$|data\\\\.json|\\\\.env\\\\.\")",
+      "Bash(git -c user.email=panyaoo1381@gmail.com -c 'user.name=Pet Nova' commit -q -m ' *)"
     ]
   }
 }
