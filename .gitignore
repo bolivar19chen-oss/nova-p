@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment variables (real secrets — never commit)
+.env
+.env.*
+!.env.example
+
+# App database (contains password hashes and user data)
+server/data.json
+
+# Uploaded user files
+server/uploads/
+
+# Knowledge graph output (large, regenerable)
+graphify-out/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp

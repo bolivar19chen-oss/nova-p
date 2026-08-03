@@ -1,0 +1,23 @@
+# Herramientas clonadas dentro del proyecto. No son parte de Pet Nova.
+# Sin esto el grafo las indexa y las consultas sobre el proyecto devuelven ruido:
+# durante una sesion entera preguntar por Pet Nova traia nodos de graphify y rtk.
+ponytail/
+rtk/
+graphify/
+i-have-adhd/
+claude-token-efficient/
+
+# Documentacion de skills instaladas. No es codigo del proyecto y contamina
+# las consultas con apendices de diseno y guias de herramientas.
+.agents/
+.claude/skills/
+agent/
+
+# Andamiaje muerto que dejo Manus, no lo usa nadie
+server/_core/
+client/src/_core/
+
+# Salidas de build y dependencias
+node_modules/
+dist/
+graphify-out/

@@ -1,0 +1,435 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Brand tokens (contract shared with other agents — do not rename) */
+  --color-brand-purple: #523f7a;
+  --color-brand-purple-light: #8268d5;
+  --color-brand-cyan: #0cc0df;
+  --color-brand-red: #e23b3b;
+
+  /* Profundidades derivadas del morado de marca. Misma familia que #523f7a,
+     bajando luminosidad y subiendo saturacion, igual que hace levora.cuberto.com
+     con su #1E0333 / #2C044B / #140924. Permiten el fondo tipo OLED sin salirse
+     de la identidad. */
+  --color-brand-void: #0d0716;
+  --color-brand-deep: #160c26;
+  --color-brand-abyss: #1f1136;
+
+  /* Escala tipografica de contraste alto. La firma editorial no es el color:
+     es que el titular sea 4 veces el cuerpo y el interlineado quede apretado. */
+  --text-display: 4.5rem;
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.035em;
+  --text-headline: 2.75rem;
+  --text-headline--line-height: 1.06;
+  --text-headline--letter-spacing: -0.028em;
+  --text-title: 1.75rem;
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.02em;
+  --text-eyebrow: 0.625rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.2em;
+}
+
+@layer base {
+  /* Curvas de movimiento con masa fisica. Nada de linear ni ease-in-out. */
+  :root {
+    --ease-spatial: cubic-bezier(0.32, 0.72, 0, 1);
+    --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  }
+}
+
+:root {
+  --primary: #8268d5;
+  --primary-foreground: #ffffff;
+  --sidebar-primary: #8268d5;
+  --sidebar-primary-foreground: #ffffff;
+  --chart-1: #0cc0df;
+  --chart-2: #8268d5;
+  --chart-3: #523f7a;
+  --chart-4: #0cc0df;
+  --chart-5: #8268d5;
+  --radius: 0.75rem;
+  /* Capas de casi-blanco, como hace Apple: la pagina es gris clarisimo y la
+     tarjeta es blanco puro. La profundidad sale de esa diferencia minima de
+     valor, no de bordes ni de sombras duras. Antes ambos eran blanco puro y
+     por eso todo se veia plano. */
+  --background: oklch(0.976 0.001 286);
+  --foreground: oklch(0.18 0.012 285);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.235 0.015 65);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.235 0.015 65);
+  --secondary: oklch(0.98 0.001 286.375);
+  --secondary-foreground: oklch(0.4 0.015 65);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: #0cc0df;
+  --accent-foreground: #ffffff;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: #8268d5;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.235 0.015 65);
+  --sidebar-accent: #8268d5;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: #8268d5;
+}
+
+.dark {
+  --primary: var(--color-brand-purple-light);
+  --primary-foreground: #ffffff;
+  --sidebar-primary: var(--color-brand-purple-light);
+  --sidebar-primary-foreground: #ffffff;
+  /* Antes eran grises neutros. Ahora derivan del morado de marca: el fondo
+     oscuro pertenece a la identidad en vez de ser un gris cualquiera. */
+  --background: var(--color-brand-void);
+  --foreground: oklch(0.93 0.006 300);
+  --card: var(--color-brand-deep);
+  --card-foreground: oklch(0.93 0.006 300);
+  --popover: var(--color-brand-abyss);
+  --popover-foreground: oklch(0.93 0.006 300);
+  --secondary: var(--color-brand-abyss);
+  --secondary-foreground: oklch(0.7 0.005 65);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground:  oklch(0.92 0.005 65);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.488 0.243 264.376);
+  --chart-1: var(--color-brand-cyan);
+  --chart-2: var(--color-brand-purple-light);
+  --chart-3: var(--color-brand-purple);
+  --chart-4: var(--color-brand-cyan);
+  --chart-5: var(--color-brand-purple-light);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.85 0.005 65);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground:  oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.488 0.243 264.376);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+@layer utilities {
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes stat-pulse {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-card-in {
+    animation: fade-in-up 400ms ease-out both;
+  }
+
+  .animate-stat-pulse {
+    animation: stat-pulse 500ms ease-out both;
+  }
+
+  .stagger-1 {
+    animation-delay: 60ms;
+  }
+  .stagger-2 {
+    animation-delay: 120ms;
+  }
+  .stagger-3 {
+    animation-delay: 180ms;
+  }
+  .stagger-4 {
+    animation-delay: 240ms;
+  }
+
+  .hover-lift {
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-in,
+  .animate-stat-pulse {
+    animation: none;
+  }
+  .hover-lift {
+    transition: none;
+  }
+  .hover-lift:hover {
+    transform: none;
+  }
+}
+
+@layer components {
+  /* Estilos mejorados para labels.
+     Antes era text-gray-700 fijo, que en modo oscuro quedaba ilegible. */
+  label {
+    @apply text-foreground/80 font-medium;
+  }
+
+  .dark label {
+    @apply text-gray-300;
+  }
+
+  /**
+   * Custom container utility that centers content and adds responsive padding.
+   *
+   * This overrides Tailwind's default container behavior to:
+   * - Auto-center content (mx-auto)
+   * - Add responsive horizontal padding
+   * - Set max-width for large screens
+   *
+   * Usage: <div className="container">...</div>
+   *
+   * For custom widths, use max-w-* utilities directly:
+   * <div className="max-w-6xl mx-auto px-4">...</div>
+   */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem; /* 16px - mobile padding */
+    padding-right: 1rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem; /* 24px - tablet padding */
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem; /* 32px - desktop padding */
+      padding-right: 2rem;
+      max-width: 1280px; /* Standard content width */
+    }
+  }
+}
+/* ============================================================
+   Capa premium: fondo atmosferico, doble bisel y movimiento.
+   Inspirado en levora.cuberto.com, construido con los colores
+   de Pet Nova. Todo respeta prefers-reduced-motion al final.
+   ============================================================ */
+@layer utilities {
+
+  /* --- Fondo atmosferico ---------------------------------- */
+
+  /* Orbes de luz difusa. Reemplaza al gradiente plano de antes.
+     Va en un pseudo-elemento fijo para no repintar al scrollear. */
+  .atmos {
+    position: relative;
+    isolation: isolate;
+  }
+  /* En claro es una INSINUACION de color, no un degradado vistoso. Apple no
+     pinta el fondo: deja que el blanco respire y sugiere el tono apenas. */
+  .atmos::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(70rem 45rem at 10% -10%, color-mix(in oklab, var(--color-brand-purple-light) 5%, transparent), transparent 65%),
+      radial-gradient(55rem 40rem at 95% 5%, color-mix(in oklab, var(--color-brand-cyan) 4%, transparent), transparent 65%);
+  }
+  .dark .atmos::before {
+    background:
+      radial-gradient(60rem 40rem at 12% -8%, color-mix(in oklab, var(--color-brand-purple-light) 26%, transparent), transparent 68%),
+      radial-gradient(45rem 35rem at 92% 8%, color-mix(in oklab, var(--color-brand-cyan) 14%, transparent), transparent 68%),
+      radial-gradient(50rem 45rem at 50% 108%, color-mix(in oklab, var(--color-brand-purple) 30%, transparent), transparent 70%);
+  }
+
+  /* Grano de pelicula. Fijo y sin eventos, para que no cueste repintados. */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* --- Doble bisel: carcasa exterior + nucleo interior ------ */
+
+  .bezel {
+    padding: 0.375rem;
+    border-radius: 2rem;
+    background: color-mix(in oklab, var(--color-brand-purple) 3%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-brand-purple) 7%, transparent);
+  }
+  .dark .bezel {
+    background: rgb(255 255 255 / 0.04);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  }
+
+  /* Sombra tipo Apple: enorme, muy difusa y de opacidad bajisima. Se lee como
+     aire debajo del objeto, no como un borde oscuro. Dos capas: una cercana que
+     define el canto y una lejana que da la flotacion. */
+  .bezel-core {
+    border-radius: calc(2rem - 0.375rem);
+    background: var(--card);
+    box-shadow:
+      0 1px 2px rgb(16 12 24 / 0.04),
+      0 24px 64px -24px rgb(16 12 24 / 0.10);
+  }
+  .dark .bezel-core {
+    background: var(--color-brand-deep);
+    box-shadow:
+      inset 0 1px 1px rgb(255 255 255 / 0.08),
+      0 24px 60px -28px rgb(0 0 0 / 0.7);
+  }
+
+  /* --- Etiqueta microscopica sobre los titulares ------------ */
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.3rem 0.75rem;
+    font-size: var(--text-eyebrow);
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    font-weight: 500;
+    color: color-mix(in oklab, var(--color-brand-purple) 85%, transparent);
+    background: color-mix(in oklab, var(--color-brand-purple) 8%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-brand-purple) 16%, transparent);
+  }
+  .dark .eyebrow {
+    color: color-mix(in oklab, var(--color-brand-cyan) 90%, white);
+    background: rgb(255 255 255 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
+  }
+
+  /* --- Movimiento con masa ---------------------------------- */
+
+  .spatial {
+    transition-timing-function: var(--ease-spatial);
+    transition-duration: 700ms;
+  }
+
+  /* Entrada al aparecer en pantalla. Solo transform, opacity y filter. */
+  @keyframes rise-in {
+    from { opacity: 0; transform: translate3d(0, 4rem, 0); filter: blur(12px); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0);    filter: blur(0); }
+  }
+  .rise {
+    animation: rise-in 900ms var(--ease-spatial) both;
+  }
+  .rise-1 { animation-delay: 80ms; }
+  .rise-2 { animation-delay: 160ms; }
+  .rise-3 { animation-delay: 240ms; }
+  .rise-4 { animation-delay: 320ms; }
+
+  /* Presion fisica al pulsar y tension interna del icono anidado. */
+  .press {
+    transition: transform 400ms var(--ease-spatial), box-shadow 400ms var(--ease-spatial);
+  }
+  .press:active { transform: scale(0.98); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rise,
+    .rise-1, .rise-2, .rise-3, .rise-4 {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    .spatial, .press { transition: none !important; }
+    .grain::after { display: none; }
+  }
+}

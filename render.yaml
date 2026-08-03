@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: pet-nova
+    runtime: node
+    plan: free
+    buildCommand: npm install -g pnpm && pnpm install && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+    disk:
+      name: pet-nova-data
+      mountPath: /opt/render/project/src/dist
+      sizeGB: 1
