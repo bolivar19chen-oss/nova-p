@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +17,7 @@ interface CommunityProps {
 const EMOJIS = ["🐶", "🐱", "🐾", "🐰", "🐦", "🐢"];
 
 export default function Community({ onBack, ownerName, city, petName }: CommunityProps) {
+  const { t, language } = useLanguage();
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [draft, setDraft] = useState("");
   const [openComment, setOpenComment] = useState<string | null>(null);
@@ -65,7 +67,7 @@ export default function Community({ onBack, ownerName, city, petName }: Communit
       };
       setPosts((p) => [localPost, ...p]);
       setDraft("");
-      toast.info("Guardado localmente (backend no disponible en esta vista previa)");
+      toast.info(t("community.savedLocally"));
     }
   };
 
@@ -104,7 +106,7 @@ export default function Community({ onBack, ownerName, city, petName }: Communit
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-purple to-brand-cyan bg-clip-text text-transparent">
-            My Pet Community
+            {t("nav.myPetCommunity")}
           </h1>
         </div>
       </header>
@@ -112,28 +114,28 @@ export default function Community({ onBack, ownerName, city, petName }: Communit
       <main className="max-w-2xl mx-auto px-4 md:px-6 py-8 space-y-6">
         {offline && (
           <Card className="p-3 bg-amber-50 border-amber-200 text-sm text-amber-800">
-            No se pudo conectar al backend — mostrando la comunidad en modo local. Al desplegar el servidor esto se sincroniza para todos.
+            {t("community.offlineNotice")}
           </Card>
         )}
 
         <Card className="p-5 bg-white border-gray-100">
           <Textarea
-            placeholder={`¿Qué está haciendo ${petName} hoy?`}
+            placeholder={`${t("community.draftPlaceholderBefore")} ${petName} ${t("community.draftPlaceholderAfter")}`}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             className="mb-3"
           />
           <div className="flex justify-end">
             <Button onClick={handlePost} className="gap-2">
-              <Send size={16} /> Publicar
+              <Send size={16} /> {t("community.postButton")}
             </Button>
           </div>
         </Card>
 
         {loading ? (
-          <p className="text-center text-gray-500">Cargando comunidad...</p>
+          <p className="text-center text-gray-500">{t("community.loading")}</p>
         ) : posts.length === 0 ? (
-          <Card className="p-8 text-center text-gray-500 bg-white border-gray-100">Sé el primero en compartir un momento con tu mascota 🐾</Card>
+          <Card className="p-8 text-center text-gray-500 bg-white border-gray-100">{t("community.empty")}</Card>
         ) : (
           posts.map((post) => (
             <Card key={post.id} className="p-5 bg-white border-gray-100">
@@ -143,10 +145,10 @@ export default function Community({ onBack, ownerName, city, petName }: Communit
                 </div>
                 <div>
                   <p className="font-semibold text-gray-900">
-                    {post.author} {post.petName ? `· con ${post.petName} ${post.emoji}` : post.emoji}
+                    {post.author} {post.petName ? `· ${t("community.with")} ${post.petName} ${post.emoji}` : post.emoji}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {post.city} · {new Date(post.createdAt).toLocaleString("es-PA")}
+                    {post.city} · {new Date(post.createdAt).toLocaleString(language === "es" ? "es-PA" : "en-US")}
                   </p>
                 </div>
               </div>
@@ -171,11 +173,11 @@ export default function Community({ onBack, ownerName, city, petName }: Communit
                     <Textarea
                       value={commentDraft}
                       onChange={(e) => setCommentDraft(e.target.value)}
-                      placeholder="Escribe un comentario..."
+                      placeholder={t("community.commentPlaceholder")}
                       className="min-h-9 py-2"
                     />
                     <Button size="sm" onClick={() => handleComment(post.id)}>
-                      Enviar
+                      {t("community.send")}
                     </Button>
                   </div>
                 </div>

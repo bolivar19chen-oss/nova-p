@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import PageHeader from "@/components/PageHeader";
 import {
   Dialog,
@@ -21,64 +22,65 @@ interface DesinformacionProps {
 
 interface Articulo {
   id: string;
-  title: string;
+  titleKey: string;
   emoji: string;
   gradient: string;
-  body: string;
+  bodyKey: string;
 }
 
 interface Jornada {
   id: string;
   place: string;
-  date: string;
-  location: string;
-  description: string;
+  dateKey: string;
+  locationKey: string;
+  descriptionKey: string;
 }
 
 // Contenido de ejemplo — sin assets reales todavía, se usan placeholders
 // con gradiente + emoji hasta que el equipo entregue imágenes definitivas.
+// Los textos viven en LanguageContext.tsx bajo la clave desinformacion.*
 const ARTICULOS: Articulo[] = [
   {
     id: "cuidados-basicos",
-    title: "Cuidados básicos para tu perro",
+    titleKey: "desinformacion.article.basicCare.title",
     emoji: "🐶",
     gradient: "from-brand-cyan to-brand-purple-light",
-    body: "Alimentación balanceada, agua fresca disponible siempre, paseos diarios y visitas periódicas al veterinario son la base del bienestar de tu perro. No olvides mantener al día sus vacunas y desparasitaciones.",
+    bodyKey: "desinformacion.article.basicCare.body",
   },
   {
     id: "alimentacion-saludable",
-    title: "Alimentación saludable",
+    titleKey: "desinformacion.article.nutrition.title",
     emoji: "🥗",
     gradient: "from-brand-purple to-brand-purple-light",
-    body: "Una dieta equilibrada según la edad, tamaño y nivel de actividad de tu mascota previene enfermedades y mejora su calidad de vida. Evita darle comida humana con sal, azúcar o condimentos.",
+    bodyKey: "desinformacion.article.nutrition.body",
   },
   {
     id: "importancia-ejercicio",
-    title: "La importancia del ejercicio",
+    titleKey: "desinformacion.article.exercise.title",
     emoji: "🏃",
     gradient: "from-brand-cyan to-brand-purple",
-    body: "El ejercicio diario ayuda a controlar el peso, reduce la ansiedad y fortalece el vínculo con tu mascota. Adapta la intensidad y duración a su raza, edad y condición física.",
+    bodyKey: "desinformacion.article.exercise.body",
   },
   {
     id: "entender-mascota",
-    title: "Cómo entender a tu mascota",
+    titleKey: "desinformacion.article.understandingPet.title",
     emoji: "🐾",
     gradient: "from-brand-purple-light to-brand-cyan",
-    body: "El lenguaje corporal, los ladridos, maullidos y la postura de tu mascota comunican mucho sobre cómo se siente. Aprender a leer estas señales fortalece la comunicación y previene problemas de comportamiento.",
+    bodyKey: "desinformacion.article.understandingPet.body",
   },
   {
     id: "vacunas-esenciales",
-    title: "Vacunas esenciales",
+    titleKey: "desinformacion.article.vaccines.title",
     emoji: "💉",
     gradient: "from-brand-red to-brand-purple-light",
-    body: "Las vacunas protegen a tu mascota de enfermedades graves y contagiosas. Consulta con tu veterinario el esquema de vacunación adecuado según su especie, edad y estilo de vida.",
+    bodyKey: "desinformacion.article.vaccines.body",
   },
   {
     id: "senales-alerta",
-    title: "Señales de alerta en mascotas",
+    titleKey: "desinformacion.article.warningSigns.title",
     emoji: "⚠️",
     gradient: "from-brand-purple to-brand-cyan",
-    body: "Pérdida de apetito, letargo, vómitos frecuentes o cambios bruscos de comportamiento pueden ser señales de que algo no está bien. Ante cualquier duda, consulta a un veterinario cuanto antes.",
+    bodyKey: "desinformacion.article.warningSigns.body",
   },
 ];
 
@@ -86,27 +88,28 @@ const JORNADAS: Jornada[] = [
   {
     id: "san-miguelito",
     place: "San Miguelito",
-    date: "15 de junio 2026",
-    location: "Parque Los Andes",
-    description: "Jornada gratuita de vacunación antirrábica y desparasitación para perros y gatos.",
+    dateKey: "desinformacion.jornada.sanMiguelito.date",
+    locationKey: "desinformacion.jornada.sanMiguelito.location",
+    descriptionKey: "desinformacion.jornada.sanMiguelito.description",
   },
   {
     id: "la-chorrera",
     place: "La Chorrera",
-    date: "22 de junio 2026",
-    location: "Plaza Central",
-    description: "Vacunación general y control veterinario básico sin costo para tu mascota.",
+    dateKey: "desinformacion.jornada.laChorrera.date",
+    locationKey: "desinformacion.jornada.laChorrera.location",
+    descriptionKey: "desinformacion.jornada.laChorrera.description",
   },
   {
     id: "arraijan",
     place: "Arraiján",
-    date: "29 de junio 2026",
-    location: "Cancha Municipal",
-    description: "Jornada de vacunación antirrábica abierta a toda la comunidad.",
+    dateKey: "desinformacion.jornada.arraijan.date",
+    locationKey: "desinformacion.jornada.arraijan.location",
+    descriptionKey: "desinformacion.jornada.arraijan.description",
   },
 ];
 
 export default function Desinformacion({ onBack }: DesinformacionProps) {
+  const { t } = useLanguage();
   const [selectedArticulo, setSelectedArticulo] = useState<Articulo | null>(null);
   const [selectedJornada, setSelectedJornada] = useState<Jornada | null>(null);
 
@@ -119,7 +122,7 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Geist', sans-serif" }}>
-      <PageHeader onBack={onBack} title="Desinformación" />
+      <PageHeader onBack={onBack} title={t("nav.desinformacion")} />
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
         {/* Fila de botones tab — ahora son botones reales que hacen scroll suave a su bloque */}
@@ -138,7 +141,7 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
             className="flex-1 inline-flex items-center justify-center gap-2 bg-brand-red text-white font-semibold text-sm text-center rounded-full py-3.5 px-5 press spatial hover:opacity-95"
           >
             <Syringe size={16} strokeWidth={1.25} />
-            Jornadas de Vacunación
+            {t("nav.vaccinationDays")}
           </button>
         </div>
 
@@ -148,7 +151,7 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
             <span className="eyebrow mb-4 w-fit">We Care</span>
             <h2 className="text-title font-bold text-foreground tracking-tight mb-6 flex items-center gap-2.5">
               <PawPrint className="text-brand-cyan shrink-0" size={22} strokeWidth={1.25} />
-              Artículos informativos sobre mascotas
+              {t("desinformacion.articlesHeading")}
             </h2>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
@@ -175,7 +178,7 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
                       </div>
                       <div className="p-4 flex-1 flex flex-col">
                         <p className="font-semibold text-sm text-foreground leading-snug flex-1">
-                          {articulo.title}
+                          {t(articulo.titleKey)}
                         </p>
                         <button
                           type="button"
@@ -185,7 +188,7 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
                             setSelectedArticulo(articulo);
                           }}
                         >
-                          Leer más
+                          {t("desinformacion.readMore")}
                           <span className="flex items-center justify-center w-5 h-5 rounded-full bg-brand-cyan text-white transition-transform duration-300 group-hover/btn:translate-x-0.5">
                             <ArrowRight size={12} strokeWidth={1.25} />
                           </span>
@@ -200,10 +203,10 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
 
           {/* Bloque derecho: jornadas de vacunacion */}
           <section ref={jornadasRef} className="scroll-mt-24">
-            <span className="eyebrow mb-4 w-fit">Jornadas</span>
+            <span className="eyebrow mb-4 w-fit">{t("desinformacion.sessionsEyebrow")}</span>
             <h2 className="text-title font-bold text-foreground tracking-tight mb-6 flex items-center gap-2.5">
               <Syringe className="text-brand-red shrink-0" size={22} strokeWidth={1.25} />
-              Próximas jornadas de vacunación
+              {t("desinformacion.upcomingSessions")}
             </h2>
 
             <div className="space-y-4 md:space-y-5">
@@ -221,20 +224,20 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-foreground">
-                            Jornada de Vacunación {jornada.place}
+                            {t("desinformacion.vaccinationDayPrefix")} {jornada.place}
                           </p>
                           <p className="text-sm text-muted-foreground mt-1.5 flex items-center gap-2">
-                            <Calendar size={14} strokeWidth={1.25} className="text-brand-red shrink-0" /> {jornada.date}
+                            <Calendar size={14} strokeWidth={1.25} className="text-brand-red shrink-0" /> {t(jornada.dateKey)}
                           </p>
                           <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
-                            <MapPin size={14} strokeWidth={1.25} className="text-brand-red shrink-0" /> {jornada.location}
+                            <MapPin size={14} strokeWidth={1.25} className="text-brand-red shrink-0" /> {t(jornada.locationKey)}
                           </p>
                           <button
                             type="button"
                             className="group/btn inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-brand-red text-white text-xs font-semibold mt-4 press spatial"
                             onClick={() => setSelectedJornada(jornada)}
                           >
-                            Ver detalles
+                            {t("desinformacion.viewDetails")}
                             <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/20 transition-transform duration-300 group-hover/btn:translate-x-0.5">
                               <ArrowRight size={12} strokeWidth={1.25} />
                             </span>
@@ -261,9 +264,9 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
                 {selectedArticulo.emoji}
               </div>
               <DialogHeader>
-                <DialogTitle>{selectedArticulo.title}</DialogTitle>
+                <DialogTitle>{t(selectedArticulo.titleKey)}</DialogTitle>
                 <DialogDescription className="text-muted-foreground leading-relaxed pt-2">
-                  {selectedArticulo.body}
+                  {t(selectedArticulo.bodyKey)}
                 </DialogDescription>
               </DialogHeader>
             </>
@@ -276,16 +279,16 @@ export default function Desinformacion({ onBack }: DesinformacionProps) {
         <DialogContent>
           {selectedJornada && (
             <DialogHeader>
-              <DialogTitle>Jornada de Vacunación {selectedJornada.place}</DialogTitle>
+              <DialogTitle>{t("desinformacion.vaccinationDayPrefix")} {selectedJornada.place}</DialogTitle>
               <DialogDescription asChild>
                 <div className="text-muted-foreground leading-relaxed pt-2 space-y-2">
                   <p className="flex items-center gap-2">
-                    <Calendar size={16} strokeWidth={1.25} className="text-brand-red shrink-0" /> {selectedJornada.date}
+                    <Calendar size={16} strokeWidth={1.25} className="text-brand-red shrink-0" /> {t(selectedJornada.dateKey)}
                   </p>
                   <p className="flex items-center gap-2">
-                    <MapPin size={16} strokeWidth={1.25} className="text-brand-red shrink-0" /> {selectedJornada.location}
+                    <MapPin size={16} strokeWidth={1.25} className="text-brand-red shrink-0" /> {t(selectedJornada.locationKey)}
                   </p>
-                  <p>{selectedJornada.description}</p>
+                  <p>{t(selectedJornada.descriptionKey)}</p>
                 </div>
               </DialogDescription>
             </DialogHeader>

@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { UserData } from "@/App";
 import { ChevronRight, ChevronLeft, Check } from "lucide-react";
-import { registerAccount, uploadPhoto, setToken } from "@/lib/api";
+import { registerAccount, resizeImageToBase64, setToken } from "@/lib/api";
 import Logo from "@/components/Logo";
 
 const BREEDS = {
@@ -64,14 +64,14 @@ export default function Registration({ setUserData, goToLogin }: RegistrationPro
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setPhotoFile(file);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setPhoto(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    setPhotoFile(file);
+    resizeImageToBase64(file)
+      .then((dataUrl) => setPhoto(dataUrl))
+      .catch((err: Error) => {
+        toast.error(err.message);
+        setPhotoFile(null);
+      });
   };
 
   const validateStep1 = () => {
@@ -114,10 +114,10 @@ export default function Registration({ setUserData, goToLogin }: RegistrationPro
     if (!validateStep3()) return;
     setSubmitting(true);
 
-    let photoUrl = photo;
     try {
-      // 1) Create the real account (hashed password stored server-side,
-      // full pet + owner profile stored so login can restore everything)
+      // Create the real account (hashed password stored server-side, full
+      // pet + owner profile -- including the already-resized base64 photo
+      // -- stored so login can restore everything).
       const { password: _pw1, confirmPassword: _cpw1, ...profileFields } = formData;
       const { token } = await registerAccount({
         ownerName: formData.ownerName,
@@ -126,30 +126,25 @@ export default function Registration({ setUserData, goToLogin }: RegistrationPro
         profile: { ...profileFields, photo },
       });
       setToken(token);
-
-      // 2) Upload the real photo file to the backend (persisted to disk)
-      if (photoFile) {
-        try {
-          const { url } = await uploadPhoto(photoFile);
-          photoUrl = url;
-        } catch {
-          // Keep the local base64 preview if the upload endpoint isn't reachable
-        }
-      }
     } catch (err: any) {
-      // Backend unreachable or email already registered — still let the
-      // person continue with a local-only session so the demo isn't blocked
       if (err?.response?.status === 409) {
         toast.error(t("registration.emailExists"));
         setSubmitting(false);
         return;
       }
+      if (err?.response?.status === 400) {
+        toast.error(err?.response?.data?.error || t("toast.required"));
+        setSubmitting(false);
+        return;
+      }
+      // Backend otherwise unreachable — still let the person continue with
+      // a local-only session so the demo isn't blocked
     }
 
     const { password: _pw, confirmPassword: _cpw, ...rest } = formData;
     const userData: UserData = {
       ...rest,
-      photo: photoUrl,
+      photo,
       createdAt: new Date().toISOString(),
     };
 

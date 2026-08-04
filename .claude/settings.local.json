@@ -128,7 +128,31 @@
       "Bash(sed -i '/# Salida del bundle para Vercel/,+1d' .gitignore)",
       "Bash(awk -F= '/^[A-Z]/ {printf \"%-14s -> %d caracteres, empieza con: %.18s...\\\\n\", $1, length\\($0\\)-length\\($1\\)-1, substr\\($0, length\\($1\\)+2\\)}' .env)",
       "Bash(git -c user.email=panyaoo1381@gmail.com -c 'user.name=Pet Nova' commit -q -m 'Vercel: no romper la API cuando el disco es de solo lectura *)",
-      "Bash(git -c user.email=panyaoo1381@gmail.com -c 'user.name=Pet Nova' commit -q -m 'Vercel: enrutar explicitamente las rutas de API anidadas *)"
+      "Bash(git -c user.email=panyaoo1381@gmail.com -c 'user.name=Pet Nova' commit -q -m 'Vercel: enrutar explicitamente las rutas de API anidadas *)",
+      "Bash(grep -vE \"Warning|libpq|sslmode|prepare for|current behavior|postgresql.org|trace-warnings|^$\")",
+      "Bash(\"C:/Users/Usuario/AppData/Local/Programs/Python/Python312/python.exe\" -c \"import PIL, numpy; print\\('Pillow', PIL.__version__, '| numpy', numpy.__version__\\)\")",
+      "Bash(\"C:/Users/Usuario/AppData/Local/Programs/Python/Python312/python.exe\" \"C:/Users/Usuario/AppData/Local/Temp/claude/C--Users-Usuario-Desktop-Nueva-carpeta/71d4274d-ad1d-4155-bc36-8287b156cb88/scratchpad/plate.py\")",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/react-leaflet/package.json'\\).version\\); console.log\\(require\\('./node_modules/leaflet/package.json'\\).version\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3020/api/alerts)",
+      "Bash(PORT=3020 npx tsx server/index.ts)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3020/api/alerts)",
+      "Bash(curl -s -v http://127.0.0.1:3020/api/alerts)",
+      "Bash(curl -s -X POST http://127.0.0.1:3020/api/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"__CMDSUB_OUTPUT__\",\"password\":\"testpass123\"}')",
+      "Bash(sed -i 's|d.line\\(\\\\[\\(MARGIN, top - 58 \\\\* S\\), \\(CW - MARGIN, top - 58 \\\\* S\\)\\\\],|d.line\\([\\(MARGIN, top - 62 * S\\), \\(CW - MARGIN, top - 62 * S\\)],|; s|d.text\\(\\(MARGIN, top - 92 \\\\* S\\)|d.text\\(\\(MARGIN, top - 96 * S\\)|' \"C:/Users/Usuario/AppData/Local/Temp/claude/C--Users-Usuario-Desktop-Nueva-carpeta/71d4274d-ad1d-4155-bc36-8287b156cb88/scratchpad/plate.py\")",
+      "Bash(python3 -c \"print\\('data:image/jpeg;base64,' + 'A'*750000\\)\")",
+      "Bash(node -e \"console.log\\('data:image/jpeg;base64,' + 'A'.repeat\\(750000\\)\\)\")",
+      "Bash(curl -s -w '\\\\nHTTP_STATUS:%{http_code}\\\\n' -X POST http://127.0.0.1:3020/api/auth/register -H 'Content-Type: application/json' --data-binary '@C:\\\\Users\\\\Usuario\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Usuario-Desktop-Nueva-carpeta\\\\71d4274d-ad1d-4155-bc36-8287b156cb88\\\\scratchpad\\\\bigbody.json')",
+      "Bash(node -e \"console.log\\(JSON.parse\\(require\\('fs'\\).readFileSync\\(process.argv[1],'utf-8'\\)\\).token\\)\" \"C:\\\\Users\\\\Usuario\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Usuario-Desktop-Nueva-carpeta\\\\71d4274d-ad1d-4155-bc36-8287b156cb88\\\\scratchpad\\\\register.json\")",
+      "Bash(curl -s -w '\\\\nHTTP_STATUS:%{http_code}\\\\n' -X PATCH http://127.0.0.1:3020/api/auth/me -H 'Content-Type: application/json' -H 'Authorization: Bearer __TRACKED_VAR__' --data-binary '@C:\\\\Users\\\\Usuario\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Usuario-Desktop-Nueva-carpeta\\\\71d4274d-ad1d-4155-bc36-8287b156cb88\\\\scratchpad\\\\bigpatch.json')",
+      "Bash(curl -s -w \"\\\\nHTTP_STATUS:%{http_code}\\\\n\" -X POST http://127.0.0.1:3020/api/upload)",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 3020 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess\")",
+      "Bash(powershell -Command \"Stop-Process -Id 24304 -Force\")",
+      "Bash(cat /tmp/server-log.txt 2>/dev/null | tail -60)",
+      "Bash(NODE_ENV=development PORT=3001 npx tsx watch server/index.ts)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/api/health)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(cat /tmp/tok.txt 2>/dev/null | head -c 240)",
+      "Bash(grep -icE \"\\\\.env$|data\\\\.json\")"
     ]
   }
 }

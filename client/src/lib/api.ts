@@ -133,11 +133,52 @@ export const changePassword = (payload: { currentPassword: string; newPassword: 
   api.post<{ ok: true }>("/auth/change-password", payload).then((r) => r.data);
 
 // ---------- Photo upload ----------
-export const uploadPhoto = (file: File) => {
-  const form = new FormData();
-  form.append("photo", file);
-  return api.post<{ url: string }>("/upload", form, { headers: { "Content-Type": "multipart/form-data" } }).then((r) => r.data);
-};
+// Avatars are pet photos: small, and stored inline as base64 in the user's
+// profile (jsonb), not as a separate uploaded file -- Vercel's disk is
+// ephemeral so anything multer wrote there disappeared between invocations.
+// Resize + compress here first: base64 inflates size ~33%, and a phone photo
+// can be several MB raw. 512px/quality 0.8 JPEG lands in the tens of KB.
+const MAX_PHOTO_BASE64_CHARS = 700 * 1024; // ~700KB in base64, matches the server-side check in routes.ts
+
+export function resizeImageToBase64(file: File, maxSide = 512, quality = 0.8): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("No se pudo leer la imagen"));
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxSide || height > maxSide) {
+          if (width > height) {
+            height = Math.round((height * maxSide) / width);
+            width = maxSide;
+          } else {
+            width = Math.round((width * maxSide) / height);
+            height = maxSide;
+          }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("No se pudo procesar la imagen"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        if (dataUrl.length > MAX_PHOTO_BASE64_CHARS) {
+          reject(new Error("La foto es muy grande incluso comprimida. Probá con otra imagen."));
+          return;
+        }
+        resolve(dataUrl);
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 // ---------- Live tracking ("buddy en camino") ----------
 export const startTracking = (payload: { petId: string; walkerName?: string; start: { lat: number; lng: number }; end: { lat: number; lng: number }; durationSeconds?: number }) =>

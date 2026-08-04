@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import PageHeader from "@/components/PageHeader";
 import { MapPin, Phone, Plus, PawPrint } from "lucide-react";
 import { LostPetAlert, getAlerts } from "@/lib/api";
@@ -11,6 +12,7 @@ interface AlertaPawProps {
 }
 
 export default function AlertaPaw({ onBack, petName, ownerCity }: AlertaPawProps) {
+  const { t } = useLanguage();
   const [alerts, setAlerts] = useState<LostPetAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -47,19 +49,19 @@ export default function AlertaPaw({ onBack, petName, ownerCity }: AlertaPawProps
 
   return (
     <div className="min-h-screen bg-background" style={{ fontFamily: "'Geist', sans-serif" }}>
-      <PageHeader onBack={onBack} title="Alerta Paw" />
+      <PageHeader onBack={onBack} title={t("nav.alertaPaw")} />
 
       <main className="max-w-3xl mx-auto px-4 md:px-6 py-16 md:py-24">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-10 md:mb-12">
           <p className="text-muted-foreground max-w-md">
-            Mascotas reportadas como perdidas en la comunidad.
+            {t("alertaPaw.subtitle")}
           </p>
           <button
             type="button"
             onClick={() => setShowForm(true)}
             className="group/btn inline-flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full bg-gradient-to-r from-brand-purple-light to-brand-cyan text-white text-sm font-semibold w-fit press spatial"
           >
-            Reportar mascota perdida
+            {t("alertaPaw.reportButton")}
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 transition-transform duration-300 group-hover/btn:translate-x-0.5">
               <Plus size={16} strokeWidth={1.25} />
             </span>
@@ -67,11 +69,11 @@ export default function AlertaPaw({ onBack, petName, ownerCity }: AlertaPawProps
         </div>
 
         {loading ? (
-          <p className="text-center text-muted-foreground py-12">Cargando alertas...</p>
+          <p className="text-center text-muted-foreground py-12">{t("alertaPaw.loading")}</p>
         ) : alerts.length === 0 ? (
           <div className="bezel spatial">
             <div className="bezel-core p-10 text-center text-muted-foreground">
-              No hay alertas activas por ahora.
+              {t("alertaPaw.empty")}
             </div>
           </div>
         ) : (

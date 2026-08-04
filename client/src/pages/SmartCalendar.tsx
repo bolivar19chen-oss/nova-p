@@ -55,7 +55,7 @@ function daysUntil(dateStr: string) {
 }
 
 export default function SmartCalendar({ onBack, petName }: SmartCalendarProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [vaccines, setVaccines] = useState<Vaccine[]>([]);
   const [reminders, setReminders] = useState<Reminder[]>([]);
@@ -104,13 +104,13 @@ export default function SmartCalendar({ onBack, petName }: SmartCalendarProps) {
     const apptEvents: CalEvent[] = appointments.map((a) => ({
       id: `appt-${a.id}`,
       date: a.date,
-      label: `${a.type} · ${a.veterinarian || "Veterinario"}`,
+      label: `${a.type} · ${a.veterinarian || t("dashboard.veterinarian")}`,
       kind: "appointment",
     }));
     const vaxEvents: CalEvent[] = vaccines.map((v) => ({
       id: `vax-${v.id}`,
       date: v.nextDue,
-      label: `Próxima dosis: ${v.name}`,
+      label: `${t("calendar.nextDoseLabel")} ${v.name}`,
       kind: "vaccine",
     }));
     const remEvents: CalEvent[] = reminders.map((r) => ({
@@ -121,7 +121,7 @@ export default function SmartCalendar({ onBack, petName }: SmartCalendarProps) {
       removable: true,
     }));
     return [...apptEvents, ...vaxEvents, ...remEvents].filter((e) => e.date);
-  }, [appointments, vaccines, reminders]);
+  }, [appointments, vaccines, reminders, language]);
 
   const events = useMemo(
     () => (filter === "all" ? allEvents : allEvents.filter((e) => e.kind === filter)),
@@ -207,7 +207,7 @@ export default function SmartCalendar({ onBack, petName }: SmartCalendarProps) {
             />
             <div className="mt-6 border-t pt-4">
               <h3 className="font-bold text-gray-900 mb-3">
-                {selected?.toLocaleDateString("es-PA", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+                {selected?.toLocaleDateString(language === "es" ? "es-PA" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
               </h3>
               {eventsForSelectedDay.length === 0 ? (
                 <p className="text-sm text-gray-500">{t("calendar.noDay")} {petName}.</p>
@@ -261,12 +261,12 @@ export default function SmartCalendar({ onBack, petName }: SmartCalendarProps) {
           <Card className="p-6 bg-white border-gray-100">
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <CalendarClock className="text-amber-500" size={20} />
-              Recordatorios inteligentes
+              {t("calendar.smartReminders")}
             </h3>
             {loading ? (
-              <p className="text-sm text-gray-500">Cargando...</p>
+              <p className="text-sm text-gray-500">{t("calendar.loading")}</p>
             ) : upcomingSmart.length === 0 ? (
-              <p className="text-sm text-gray-500">No hay nada pendiente en los próximos 7 días. 🎉</p>
+              <p className="text-sm text-gray-500">{t("calendar.nothingPending")}</p>
             ) : (
               <div className="space-y-3">
                 {upcomingSmart.map((e) => (
@@ -274,7 +274,11 @@ export default function SmartCalendar({ onBack, petName }: SmartCalendarProps) {
                     <AlertTriangle className="text-amber-500 mt-0.5" size={16} />
                     <div className="flex-1">
                       <p className="text-sm font-semibold text-gray-900">{e.label}</p>
-                      <p className="text-xs text-gray-600">{e.delta === 0 ? "Hoy" : `En ${e.delta} día${e.delta === 1 ? "" : "s"}`}</p>
+                      <p className="text-xs text-gray-600">
+                        {e.delta === 0
+                          ? t("calendar.today")
+                          : `${t("calendar.inPrefix")} ${e.delta} ${e.delta === 1 ? t("calendar.daySingular") : t("calendar.dayPlural")}`}
+                      </p>
                     </div>
                     <Badge className="ml-auto" variant={e.delta <= 1 ? "destructive" : "secondary"}>
                       {kindBadgeLabel(e.kind)}
@@ -286,7 +290,7 @@ export default function SmartCalendar({ onBack, petName }: SmartCalendarProps) {
           </Card>
 
           <Card className="p-6 bg-white border-gray-100 text-sm text-gray-600">
-            Este calendario combina automáticamente tus citas veterinarias, las próximas dosis de vacunas y tus recordatorios propios de <b>{petName}</b>, y te avisa con anticipación cuando algo se acerca.
+            {t("calendar.aboutBefore")} <b>{petName}</b>{t("calendar.aboutAfter")}
           </Card>
         </div>
       </main>

@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowLeft, Globe, Moon, Sun, Lock, LogOut, User, Mail, PawPrint, Camera } from "lucide-react";
 import { toast } from "sonner";
-import { updateProfile, changePassword, uploadPhoto } from "@/lib/api";
+import { updateProfile, changePassword, resizeImageToBase64 } from "@/lib/api";
 import { UserData } from "@/App";
 
 interface SettingsProps {
@@ -49,7 +49,6 @@ export default function Settings({ onBack, userData, setUserData, onLogout }: Se
     notes: userData.notes,
   });
   const [savingPet, setSavingPet] = useState(false);
-  const [petPhotoFile, setPetPhotoFile] = useState<File | null>(null);
   const [petPhotoPreview, setPetPhotoPreview] = useState<string | null>(userData.photo);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
@@ -117,10 +116,9 @@ export default function Settings({ onBack, userData, setUserData, onLogout }: Se
   const handlePhotoPick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setPetPhotoFile(file);
-    const reader = new FileReader();
-    reader.onload = () => setPetPhotoPreview(reader.result as string);
-    reader.readAsDataURL(file);
+    resizeImageToBase64(file)
+      .then((dataUrl) => setPetPhotoPreview(dataUrl))
+      .catch((err: Error) => toast.error(err.message));
   };
 
   const handleSavePet = async () => {
@@ -130,17 +128,8 @@ export default function Settings({ onBack, userData, setUserData, onLogout }: Se
     }
     setSavingPet(true);
     try {
-      let photoUrl = petPhotoPreview;
-      if (petPhotoFile) {
-        try {
-          const { url } = await uploadPhoto(petPhotoFile);
-          photoUrl = url;
-        } catch {
-          // Keep the local preview if the upload endpoint isn't reachable
-        }
-      }
-      await updateProfile({ profile: { ...petForm, photo: photoUrl } });
-      setUserData({ ...userData, ...petForm, photo: photoUrl });
+      await updateProfile({ profile: { ...petForm, photo: petPhotoPreview } });
+      setUserData({ ...userData, ...petForm, photo: petPhotoPreview });
       toast.success("Información de tu mascota actualizada");
       setEditPetOpen(false);
     } catch (err: any) {

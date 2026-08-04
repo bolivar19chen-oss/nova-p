@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Logo real de la marca, extraido del arte original y exportado con fondo
 // transparente. Los cuatro PNG viven en client/public/:
@@ -34,10 +35,11 @@ export default function Logo({
   size = 40,
   className,
 }: LogoProps) {
+  const { t } = useLanguage();
   return (
     <img
       src={SRC[`${variant}-${tone}`]}
-      alt="Pet Nova - Cuidamos lo que amas"
+      alt={t("app.logoAlt")}
       style={{ height: size, width: "auto" }}
       className={cn("inline-block select-none", className)}
     />

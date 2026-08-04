@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Heart, MoreHorizontal, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 import PageHeader from "@/components/PageHeader";
 
 interface PetMomentsProps {
@@ -58,46 +59,46 @@ const SAMPLE_ALBUMS: Album[] = [];
 const _EJEMPLO_DE_FORMA: Album[] = [
   {
     id: "1",
-    name: "Día de playa",
+    name: "Beach day",
     date: "12/05/2026",
     likes: 128,
     accent: "var(--color-brand-cyan)",
     photos: makePhotos(
       ["🏖️", "🐾", "🌊", "☀️", "🐕", "🐚"],
-      ["Llegando a la arena", "Huellas en la orilla", "Mirando el mar", "Descanso al sol", "Corriendo feliz", "Tesoro encontrado"]
+      ["Arriving at the sand", "Paw prints on the shore", "Watching the sea", "Resting in the sun", "Running happy", "Treasure found"]
     ),
   },
   {
     id: "2",
-    name: "Cumpleaños",
+    name: "Birthday",
     date: "03/02/2026",
     likes: 96,
     accent: "var(--color-brand-purple-light)",
     photos: makePhotos(
       ["🎂", "🎉", "🎁", "🐶"],
-      ["Soplando las velitas", "Fiesta sorpresa", "Abriendo regalos", "El festejado"]
+      ["Blowing out the candles", "Surprise party", "Opening presents", "The guest of honor"]
     ),
   },
   {
     id: "3",
-    name: "Paseo en el parque",
+    name: "Walk in the park",
     date: "20/03/2026",
     likes: 74,
     accent: "#3fb96b",
     photos: makePhotos(
       ["🌳", "🐾", "🍃", "🦴"],
-      ["Explorando el sendero", "Nuevas huellas", "Entre las hojas", "Premio merecido"]
+      ["Exploring the trail", "New paw prints", "Among the leaves", "A well-earned treat"]
     ),
   },
   {
     id: "4",
-    name: "Primeros días",
+    name: "The first days",
     date: "14/01/2026",
     likes: 212,
     accent: "#f0a132",
     photos: makePhotos(
       ["🍼", "😴", "🧸", "🐕"],
-      ["Recién llegado a casa", "Primera siesta", "Nuevo amigo de peluche", "Creciendo feliz"]
+      ["Just home", "First nap", "New stuffed friend", "Growing up happy"]
     ),
   },
 ];
@@ -156,6 +157,7 @@ function Polaroid({ photo, rotate, className }: { photo: Photo; rotate: number; 
 }
 
 export default function PetMoments({ onBack, petName, petPhoto, breed, age }: PetMomentsProps) {
+  const { t } = useLanguage();
   const [view, setView] = useState<View>("profile");
   const [activeAlbumId, setActiveAlbumId] = useState<string | null>(null);
   const [pageIndex, setPageIndex] = useState(0);
@@ -222,23 +224,23 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
               <Heart size={20} strokeWidth={1.25} className="text-brand-red fill-brand-red shrink-0" />
             </div>
             <p className="text-sm text-muted-foreground">{breed}</p>
-            <p className="text-sm text-muted-foreground">{age} años</p>
+            <p className="text-sm text-muted-foreground">{age} {t("petMoments.age")}</p>
           </div>
 
           <div className="flex justify-center gap-10 mt-10 py-5 border-y border-foreground/10 rise rise-1">
-            <Stat value={28} label="Momentos" />
-            <Stat value={156} label="Me gusta" />
-            <Stat value={32} label="Seguidores" />
+            <Stat value={28} label={t("petMoments.statMoments")} />
+            <Stat value={156} label={t("petMoments.statLikes")} />
+            <Stat value={32} label={t("petMoments.statFollowers")} />
           </div>
 
           <div className="mt-10 rise rise-2">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground tracking-tight">Momentos recientes</h3>
+              <h3 className="text-lg font-semibold text-foreground tracking-tight">{t("petMoments.recentMoments")}</h3>
               <button
                 onClick={() => setView("albums")}
                 className="flex items-center gap-1 text-sm font-medium text-brand-purple dark:text-brand-purple-light hover:opacity-80 transition-opacity"
               >
-                Ver álbumes <ChevronRight size={16} strokeWidth={1.25} />
+                {t("petMoments.viewAlbums")} <ChevronRight size={16} strokeWidth={1.25} />
               </button>
             </div>
             <div className="grid grid-cols-3 gap-3">
@@ -260,12 +262,12 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
       {view === "albums" && (
         <main className="max-w-4xl mx-auto px-4 md:px-6 py-16 md:py-24">
           <div className="flex items-center justify-between mb-8 md:mb-10">
-            <h2 className="text-title font-bold text-foreground tracking-tight">Mis álbumes</h2>
+            <h2 className="text-title font-bold text-foreground tracking-tight">{t("petMoments.myAlbums")}</h2>
             <button
-              onClick={() => toast("Muy pronto vas a poder crear nuevos álbumes")}
+              onClick={() => toast(t("petMoments.toastCreateSoon"))}
               className="group/btn inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-gradient-to-r from-brand-purple to-brand-purple-light text-white text-sm font-medium press spatial"
             >
-              Nuevo álbum
+              {t("petMoments.newAlbum")}
               <span className="flex items-center justify-center w-7 h-7 rounded-full bg-white/20 transition-transform duration-300 group-hover/btn:translate-x-0.5">
                 <Plus size={14} strokeWidth={1.25} />
               </span>
@@ -275,15 +277,15 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
           {SAMPLE_ALBUMS.length === 0 && (
             <div className="bezel spatial rise">
               <div className="bezel-core px-6 py-20 text-center">
-                <p className="text-title font-bold tracking-tight text-foreground">Aún no hay álbumes</p>
+                <p className="text-title font-bold tracking-tight text-foreground">{t("petMoments.noAlbumsTitle")}</p>
                 <p className="mx-auto mt-3 max-w-sm text-sm text-muted-foreground">
-                  Creá tu primer álbum y subí las fotos de {petName}.
+                  {t("petMoments.createFirstAlbumBefore")} {petName}.
                 </p>
                 <button
-                  onClick={() => toast("Muy pronto vas a poder crear álbumes y subir fotos")}
+                  onClick={() => toast(t("petMoments.toastCreateUploadSoon"))}
                   className="press spatial group mt-8 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-brand-purple-light to-brand-cyan py-1.5 pl-6 pr-1.5 text-white"
                 >
-                  <span className="text-sm font-medium">Crear álbum</span>
+                  <span className="text-sm font-medium">{t("petMoments.createAlbum")}</span>
                   <span className="spatial flex size-9 items-center justify-center rounded-full bg-white/20 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-110">
                     <Plus size={16} strokeWidth={1.5} />
                   </span>
@@ -331,13 +333,13 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
                         <Heart size={13} strokeWidth={2} className="fill-current" />
                         {album.likes}
                       </span>
-                      <span>{album.photos.length} fotos</span>
+                      <span>{album.photos.length} {t("petMoments.photosSuffix")}</span>
                     </div>
                   </div>
                   <button
-                    onClick={() => toast(`Opciones de "${album.name}" próximamente`)}
+                    onClick={() => toast(`${t("petMoments.optionsForBefore")} "${album.name}" ${t("petMoments.optionsForAfter")}`)}
                     className="shrink-0 p-1 text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label={`Opciones de ${album.name}`}
+                    aria-label={`${t("petMoments.optionsForBefore")} ${album.name}`}
                   >
                     <MoreHorizontal size={18} strokeWidth={1.25} />
                   </button>
@@ -358,7 +360,7 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
             <span className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-purple/10 transition-transform duration-300 group-hover/btn:-translate-x-0.5">
               <ArrowLeft size={13} strokeWidth={1.25} className="text-brand-purple dark:text-brand-purple-light" />
             </span>
-            Volver a mis álbumes
+            {t("petMoments.backToAlbums")}
           </button>
 
           {/* Marco exterior — doble bisel alrededor de la hoja física.
@@ -372,7 +374,7 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
                   disabled={pageIndex === 0}
                   className="group absolute left-0 top-1/2 -translate-y-1/2 z-20 bezel press spatial disabled:opacity-40 disabled:pointer-events-none"
                   style={{ borderRadius: "9999px" }}
-                  aria-label="Página anterior"
+                  aria-label={t("petMoments.prevPage")}
                 >
                   <span className="bezel-core flex items-center justify-center w-10 h-10" style={{ borderRadius: "9999px" }}>
                     <ChevronLeft size={18} strokeWidth={1.25} className="text-brand-purple dark:text-brand-purple-light" />
@@ -383,7 +385,7 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
                   disabled={pageIndex === pages.length - 1}
                   className="group absolute right-0 top-1/2 -translate-y-1/2 z-20 bezel press spatial disabled:opacity-40 disabled:pointer-events-none"
                   style={{ borderRadius: "9999px" }}
-                  aria-label="Página siguiente"
+                  aria-label={t("petMoments.nextPage")}
                 >
                   <span className="bezel-core flex items-center justify-center w-10 h-10" style={{ borderRadius: "9999px" }}>
                     <ChevronRight size={18} strokeWidth={1.25} className="text-brand-purple dark:text-brand-purple-light" />
@@ -410,7 +412,7 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
                         className="absolute bottom-4 left-6 text-lg md:text-xl text-brand-purple max-w-[80%]"
                         style={{ fontFamily: CURSIVE_FONT }}
                       >
-                        Momentos que llenan el alma 💜
+                        {t("petMoments.soulfulMoments")}
                       </p>
                     </div>
 
@@ -429,7 +431,7 @@ export default function PetMoments({ onBack, petName, petPhoto, breed, age }: Pe
                         className="absolute bg-yellow-200 shadow-md p-3 w-24 md:w-28 text-[11px] text-gray-700 leading-snug"
                         style={{ top: 100, right: 14, transform: "rotate(4deg)", fontFamily: CURSIVE_FONT }}
                       >
-                        ¡Qué día tan feliz! 🐾
+                        {t("petMoments.happyDayNote")}
                       </div>
                       <span className="absolute bottom-6 left-6 text-xl">💐</span>
                     </div>

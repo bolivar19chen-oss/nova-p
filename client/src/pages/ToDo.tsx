@@ -182,7 +182,7 @@ export default function ToDo({ onBack, petName }: ToDoProps) {
 
         {pendingCount > 0 && (
           <p className="text-center text-sm text-gray-500 mt-6">
-            {pendingCount} {pendingCount === 1 ? "task" : "tasks"} pending
+            {pendingCount} {pendingCount === 1 ? t("todo.taskPending") : t("todo.tasksPending")}
           </p>
         )}
       </main>

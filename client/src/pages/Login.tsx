@@ -66,7 +66,7 @@ export default function Login({ setUserData, goToRegister }: LoginProps) {
     <div className="atmos flex min-h-screen flex-col lg:flex-row" style={{ fontFamily: "'Geist', sans-serif" }}>
       {/* Left: editorial brand panel */}
       <div className="flex flex-col justify-center px-6 py-16 sm:px-10 lg:w-1/2 lg:px-20 lg:py-24">
-        <Logo variant="full" size={40} className="mb-10 rise rise-1 block" />
+        <Logo variant="full" size={56} className="self-start mb-12 rise rise-1" />
         <span className="eyebrow rise rise-1 self-start">{t("app.subtitle")}</span>
         <h1 className="text-display mt-5 font-bold text-foreground rise rise-2">
           {t("login.welcome")}

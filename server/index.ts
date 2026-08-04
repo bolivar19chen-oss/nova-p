@@ -19,13 +19,19 @@ async function startServer() {
   const server = createServer(app);
 
   app.use(cors());
-  app.use(express.json());
+  // Default express.json() limit is 100kb -- too small for a base64 pet photo
+  // (target ~700KB, see server/routes.ts). 2mb leaves headroom and our own
+  // check in routes.ts still rejects anything over the real ~700KB limit.
+  app.use(express.json({ limit: "2mb" }));
 
   // Real backend API: auth, appointments, vaccines, alerts, community feed
   // and the live pet-tracking simulator all live under /api
   app.use("/api", apiRouter);
 
-  // Uploaded pet photos (persisted to disk, see server/routes.ts)
+  // Legacy: pet photos used to be written here via multer. Now they're
+  // stored as base64 in profile.photo (see server/routes.ts), so this
+  // directory is never written to; kept only so old /uploads/* links
+  // (if any survived from before the migration) don't 404 the whole route.
   app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
 
   // Serve static files from dist/public in production

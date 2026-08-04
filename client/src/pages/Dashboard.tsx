@@ -505,7 +505,7 @@ export default function Dashboard({ userData, setUserData }: { userData: UserDat
               así que acá solo va el saludo al dueño, sin tarjeta ni foto repetida.
               Escala de contraste: eyebrow -> text-headline -> cuerpo text-sm. */}
           <section>
-            <span className="eyebrow rise">Panel</span>
+            <span className="eyebrow rise">{t("dashboard.overview")}</span>
             <h2 className="text-title sm:text-headline text-foreground mt-4 rise rise-1">
               {t("dashboard.hello")}, {userData.ownerName}!
             </h2>
@@ -572,7 +572,7 @@ export default function Dashboard({ userData, setUserData }: { userData: UserDat
           <section>
             <div className="flex items-end justify-between mb-8 gap-4">
               <div>
-                <span className="eyebrow">Agenda</span>
+                <span className="eyebrow">{t("dashboard.agenda")}</span>
                 <h3 className="text-title text-foreground mt-3">{t("dashboard.upcomingAppointments")}</h3>
               </div>
               <button
@@ -613,7 +613,7 @@ export default function Dashboard({ userData, setUserData }: { userData: UserDat
           <section>
             <div className="flex items-end justify-between mb-8 gap-4">
               <div>
-                <span className="eyebrow">Salud</span>
+                <span className="eyebrow">{t("dashboard.health")}</span>
                 <h3 className="text-title text-foreground mt-3">{t("dashboard.pendingVaccines")}</h3>
               </div>
               <button

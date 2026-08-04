@@ -1,8 +1,4 @@
 import { Router } from "express";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
 import {
   db,
@@ -33,36 +29,20 @@ import {
   clearLoginAttempts,
 } from "./auth";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// En serverless (Vercel) el disco es de solo lectura salvo /tmp, asi que crear
-// la carpeta junto al codigo revienta el modulo entero al importarse y tumba
-// TODA la API, no solo las subidas. Por eso: /tmp en Vercel, y el mkdir va
-// envuelto para que un disco de solo lectura nunca impida arrancar.
-//
-// OJO: /tmp es efimero en serverless. Las fotos subidas en produccion
-// desaparecen entre invocaciones. La solucion real es almacenamiento de
-// objetos (Vercel Blob o S3); esto solo evita que el arranque falle.
-const UPLOADS_DIR = process.env.VERCEL
-  ? path.join("/tmp", "uploads")
-  : path.join(__dirname, "uploads");
-
-try {
-  if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-} catch (err) {
-  console.warn("[uploads] no se pudo crear el directorio, las subidas quedaran deshabilitadas:", err);
-}
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-    filename: (_req, file, cb) => cb(null, `${nanoid()}${path.extname(file.originalname)}`),
-  }),
-  limits: { fileSize: 8 * 1024 * 1024 }, // 8MB
-});
-
 export const apiRouter = Router();
 apiRouter.use(attachUser);
+
+// Avatares de mascota: se guardan como base64 dentro de profile.photo (jsonb),
+// no como archivo. El cliente ya redimensiona a 512px/calidad 0.8 antes de
+// mandarlo (ver client/src/lib/api.ts), asi que esto solo atrapa el caso de
+// que ese limite se salte (API llamada directo, cliente viejo, etc).
+const MAX_PHOTO_BASE64_CHARS = 700 * 1024; // ~700KB en base64, ver client/src/lib/api.ts
+
+function photoTooLarge(profile: unknown): boolean {
+  if (!profile || typeof profile !== "object") return false;
+  const photo = (profile as Record<string, unknown>).photo;
+  return typeof photo === "string" && photo.length > MAX_PHOTO_BASE64_CHARS;
+}
 
 // ---------- Auth ----------
 apiRouter.post("/auth/register", async (req, res) => {
@@ -71,6 +51,9 @@ apiRouter.post("/auth/register", async (req, res) => {
   if (!isValidEmail(email)) return res.status(400).json({ error: "Correo inválido" });
   if (password.length < MIN_PASSWORD_LENGTH) {
     return res.status(400).json({ error: `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres` });
+  }
+  if (photoTooLarge(profile)) {
+    return res.status(400).json({ error: "La foto es demasiado grande (máximo ~700KB). Probá con otra imagen." });
   }
   const normalizedEmail = email.toLowerCase();
   const existing = await pool.query("SELECT id FROM users WHERE email = $1", [normalizedEmail]);
@@ -133,6 +116,10 @@ apiRouter.patch("/auth/me", requireAuth, async (req: AuthedRequest, res) => {
 
   const { ownerName, email, profile } = req.body as { ownerName?: string; email?: string; profile?: Record<string, unknown> };
 
+  if (photoTooLarge(profile)) {
+    return res.status(400).json({ error: "La foto es demasiado grande (máximo ~700KB). Probá con otra imagen." });
+  }
+
   let newEmail = user.email;
   if (email && email.toLowerCase() !== user.email.toLowerCase()) {
     if (!isValidEmail(email)) return res.status(400).json({ error: "Correo inválido" });
@@ -167,12 +154,6 @@ apiRouter.post("/auth/change-password", requireAuth, async (req: AuthedRequest, 
   const newHash = await hashPassword(newPassword);
   await pool.query("UPDATE users SET password_hash = $1 WHERE id = $2", [newHash, user.id]);
   res.json({ ok: true });
-});
-
-// ---------- Photo upload (real files persisted to disk) ----------
-apiRouter.post("/upload", upload.single("photo"), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No se recibió archivo" });
-  res.status(201).json({ url: `/uploads/${req.file.filename}` });
 });
 
 // ---------- Appointments (private to the owning user) ----------

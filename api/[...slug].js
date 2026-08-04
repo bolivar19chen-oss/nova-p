@@ -5,10 +5,6 @@ import express from "express";
 
 // server/routes.ts
 import { Router } from "express";
-import multer from "multer";
-import path2 from "path";
-import fs2 from "fs";
-import { fileURLToPath as fileURLToPath2 } from "url";
 import { nanoid } from "nanoid";
 
 // server/db.ts
@@ -183,29 +179,23 @@ function requireAuth(req, res, next) {
 }
 
 // server/routes.ts
-var __dirname2 = path2.dirname(fileURLToPath2(import.meta.url));
-var UPLOADS_DIR = process.env.VERCEL ? path2.join("/tmp", "uploads") : path2.join(__dirname2, "uploads");
-try {
-  if (!fs2.existsSync(UPLOADS_DIR)) fs2.mkdirSync(UPLOADS_DIR, { recursive: true });
-} catch (err) {
-  console.warn("[uploads] no se pudo crear el directorio, las subidas quedaran deshabilitadas:", err);
-}
-var upload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-    filename: (_req, file, cb) => cb(null, `${nanoid()}${path2.extname(file.originalname)}`)
-  }),
-  limits: { fileSize: 8 * 1024 * 1024 }
-  // 8MB
-});
 var apiRouter = Router();
 apiRouter.use(attachUser);
+var MAX_PHOTO_BASE64_CHARS = 700 * 1024;
+function photoTooLarge(profile) {
+  if (!profile || typeof profile !== "object") return false;
+  const photo = profile.photo;
+  return typeof photo === "string" && photo.length > MAX_PHOTO_BASE64_CHARS;
+}
 apiRouter.post("/auth/register", async (req, res) => {
   const { ownerName, email, password, profile } = req.body;
   if (!ownerName || !email || !password) return res.status(400).json({ error: "Faltan campos" });
   if (!isValidEmail(email)) return res.status(400).json({ error: "Correo inv\xE1lido" });
   if (password.length < MIN_PASSWORD_LENGTH) {
     return res.status(400).json({ error: `La contrase\xF1a debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres` });
+  }
+  if (photoTooLarge(profile)) {
+    return res.status(400).json({ error: "La foto es demasiado grande (m\xE1ximo ~700KB). Prob\xE1 con otra imagen." });
   }
   const normalizedEmail = email.toLowerCase();
   const existing = await pool.query("SELECT id FROM users WHERE email = $1", [normalizedEmail]);
@@ -262,6 +252,9 @@ apiRouter.patch("/auth/me", requireAuth, async (req, res) => {
   if (!rows[0]) return res.status(404).json({ error: "Usuario no encontrado" });
   const user = rowToUser(rows[0]);
   const { ownerName, email, profile } = req.body;
+  if (photoTooLarge(profile)) {
+    return res.status(400).json({ error: "La foto es demasiado grande (m\xE1ximo ~700KB). Prob\xE1 con otra imagen." });
+  }
   let newEmail = user.email;
   if (email && email.toLowerCase() !== user.email.toLowerCase()) {
     if (!isValidEmail(email)) return res.status(400).json({ error: "Correo inv\xE1lido" });
@@ -292,10 +285,6 @@ apiRouter.post("/auth/change-password", requireAuth, async (req, res) => {
   const newHash = await hashPassword(newPassword);
   await pool.query("UPDATE users SET password_hash = $1 WHERE id = $2", [newHash, user.id]);
   res.json({ ok: true });
-});
-apiRouter.post("/upload", upload.single("photo"), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No se recibi\xF3 archivo" });
-  res.status(201).json({ url: `/uploads/${req.file.filename}` });
 });
 apiRouter.get("/appointments", requireAuth, async (req, res) => {
   const { rows } = await pool.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY created_at", [req.userId]);
